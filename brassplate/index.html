@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Mystery of the Brass Plate</title>
+<style>
+  :root { --wine: #4a1f2b; --wine2: #6d3243; --brass: #b8862b; --brass-dk: #7a5712; --bg: #efe7d6; --paper: #fffaf0; --line: #d9ccaa; --ink: #231d19; --muted: #5d5547; --good: #2f7d4a; --bad: #a3401d; --amber: #b07a00;
+    --head: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; --body: Verdana, Tahoma, "Segoe UI", sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 1.02rem/1.6 var(--body); }
+  #app { max-width: 920px; margin: 0 auto; padding: 14px; }
+  h1, h2, h3 { font-family: var(--head); line-height: 1.2; margin: 0 0 .4em; } h1 { font-size: 2.4rem; color: var(--wine); } h2 { font-size: 1.5rem; color: var(--wine); } h3 { font-size: 1.1rem; }
+  p { margin: 0 0 .85em; } .lead { font-family: var(--head); font-size: 1.3rem; color: var(--brass-dk); } .muted { color: var(--muted); font-size: .92rem; }
+  .row { display: flex; gap: 10px; align-items: center; } .row.wrap { flex-wrap: wrap; margin: 10px 0; }
+  .btn { font: inherit; font-weight: bold; min-height: 46px; padding: 8px 18px; border-radius: 10px; border: 2px solid var(--wine); background: #fff; color: var(--wine); cursor: pointer; }
+  .btn.primary { background: var(--wine); color: #fff; } .btn.big { font-size: 1.15rem; min-height: 54px; padding: 10px 26px; } .btn.ghost { border-color: var(--line); color: var(--ink); background: transparent; } .btn.small { min-height: 38px; padding: 4px 12px; font-size: .88rem; }
+  .btn:hover:not(:disabled) { background: var(--wine2); color: #fff; border-color: var(--wine2); } .btn:disabled { opacity: .5; }
+  :focus-visible { outline: 4px solid #e0a100; outline-offset: 2px; }
+  .titlewrap { max-width: 800px; margin: 0 auto; }
+  .top { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; background: var(--wine); color: #fff; border-radius: 12px; padding: 8px 16px; }
+  .top .ttl { font-family: var(--head); font-weight: bold; font-size: 1.15rem; } .top .pts { color: #f4cf7a; font-weight: bold; } .top .tb { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+  .top .btn { background: transparent; color: #fff; border-color: #a77386; } .top .btn:hover:not(:disabled) { background: #a77386; }
+  .prog { display: flex; gap: 4px; margin: 8px 0 12px; flex-wrap: wrap; } .pg { flex: 1 1 70px; text-align: center; font-size: .75rem; padding: 3px 4px; border-radius: 6px; background: #e3d8bc; color: #7c705a; }
+  .pg.done { background: #c9b98a; color: #4d4326; } .pg.now { background: var(--brass); color: #fff; font-weight: bold; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin: 0 0 12px; } .card.paper { background: var(--paper); border-left: 8px solid var(--brass); } .card.big { text-align: center; padding: 22px; }
+  .emo { font-size: 2.2rem; } .tag { font-size: .8rem; letter-spacing: .04em; text-transform: uppercase; color: var(--brass-dk); margin-bottom: .3em; }
+  .bl { margin: 0 0 .8em; padding-left: 22px; } .bl li { margin-bottom: .3em; }
+  details.more { margin: 0 0 .8em; } details.more summary { cursor: pointer; font-weight: bold; color: var(--wine2); padding: 4px 0; } details.more p { margin: .3em 0 0; padding: 8px 12px; background: #f4ecd5; border-radius: 8px; }
+  .q { margin: 0 0 12px; } .opts { display: grid; gap: 8px; margin: 8px 0; }
+  .opt { font: inherit; text-align: left; padding: 12px 16px; border-radius: 10px; border: 2px solid var(--wine2); background: #fff; color: var(--ink); cursor: pointer; min-height: 52px; }
+  .opt:hover:not(:disabled) { background: #f6eaee; } .opt.sel { background: #f1dfe5; } .opt:disabled { cursor: default; } .opt.right { background: #dcefe1; border-color: var(--good); opacity: 1; } .opt.wrong { background: #f8e1d8; border-color: var(--bad); opacity: 1; } .opt.dim { opacity: .55; }
+  .fb { padding: 10px 14px; border-radius: 8px; margin: 6px 0 12px; } .fb.ok { background: #e1f1e6; } .fb.part { background: #fbf0d3; } .fb.no { background: #f9e7de; }
+  .chip { display: inline-block; font-size: .8rem; font-weight: bold; padding: 1px 10px; border-radius: 999px; margin-right: 6px; } .chip.full { background: #cfeadb; color: #1f5a35; } .chip.part { background: #f7e3ab; color: #6b4b00; } .chip.none { background: #e6ded0; color: #5d5547; }
+  .cmp { display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px; align-items: start; margin: 10px 0; } @media (max-width: 760px) { .cmp { grid-template-columns: 1fr; } }
+  .chk { list-style: none; margin: 0; padding: 0; } .ck { width: 100%; text-align: left; font: inherit; padding: 10px 12px; border-radius: 10px; border: 2px solid var(--brass); background: #fff; cursor: pointer; margin-top: 8px; }
+  .ck:hover { background: #fbf3dc; } .ck.on { background: #f5ecd0; } .res { margin: 4px 4px 0; font-size: .92rem; } .res.yes { color: var(--good); font-weight: bold; } .res.unk { color: var(--amber); font-weight: bold; }
+  .plate { width: 100%; height: auto; display: block; } .plbg { fill: var(--paper); } .plate .etch { font: italic 14px var(--head); fill: #5b3f0c; } .plate .dateline { font-weight: bold; }
+  .plate .hl { stroke: #d6342b; stroke-width: 5; } .plate .hlbox { fill: #ffe066; fill-opacity: .45; stroke: #d6342b; stroke-width: 2.5; } .plate .hlring { fill: none; stroke: #d6342b; stroke-width: 4; }
+  .plate .stampbox { fill: #fff; fill-opacity: .82; stroke: #b3261e; stroke-width: 6; } .plate .stamp { font: bold 52px var(--head); fill: #b3261e; text-anchor: middle; letter-spacing: 3px; } .plwrap { max-width: 420px; margin: 0 auto 10px; }
+  .think { background: #eaeef6; border-left: 6px solid #4f6fa3; border-radius: 0 8px 8px 0; padding: 8px 16px; margin: 12px 0; }
+  .cluecards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin: 10px 0; } .cc { background: #fff; border: 2px dashed var(--brass); border-radius: 10px; padding: 10px 12px; } .cc span { display: block; font-size: .75rem; font-weight: bold; color: var(--brass-dk); text-transform: uppercase; }
+  .rank { font-size: 3.4rem; } .bigpts { font-size: 1.5rem; font-weight: bold; color: var(--brass-dk); } .titlewrap .plate { max-width: 440px; margin: 10px 0 14px; }
+  .overlay { position: fixed; inset: 0; background: rgba(35, 20, 25, .62); display: flex; align-items: flex-start; justify-content: center; padding: 4vh 14px; overflow: auto; z-index: 20; }
+  .sheet { background: var(--paper); border-radius: 14px; max-width: 700px; width: 100%; padding: 22px 26px 26px; box-shadow: 0 10px 40px rgba(0,0,0,.35); } .closebtn { float: right; margin-left: 10px; }
+  .entry { border-top: 1px solid var(--line); padding-top: 10px; margin-top: 10px; } dt { font-weight: bold; margin-top: .6em; } dd { margin: 0 0 0 1em; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<noscript>This game needs JavaScript turned on.</noscript>
+<script src="data.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

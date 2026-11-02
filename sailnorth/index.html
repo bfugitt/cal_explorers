@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sail North</title>
+<style>
+  :root { --navy: #0f2a43; --navy2: #1f4a6e; --brass: #b8862b; --brass-dk: #7a5712; --paper: #f4efe2; --card: #fffdf6; --line: #d8cdb0; --ink: #1c2430; --muted: #566074;
+    --good: #2f7d4a; --bad: #b0401d; --head: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; --body: Verdana, Tahoma, "Segoe UI", sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 1rem/1.55 var(--body); }
+  #app { max-width: 1280px; margin: 0 auto; padding: 14px; }
+  h1, h2, h3 { font-family: var(--head); line-height: 1.2; margin: 0 0 .4em; } h1 { font-size: 2.5rem; color: var(--navy); } h2 { font-size: 1.5rem; } h3 { font-size: 1.05rem; margin-bottom: .3em; }
+  p { margin: 0 0 .8em; max-width: 70ch; } .lead { font-family: var(--head); font-size: 1.3rem; color: var(--brass-dk); } .muted { color: var(--muted); font-size: .9rem; }
+  .titlewrap { max-width: 900px; margin: 0 auto; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin: 0 0 10px; } .card.big { padding: 18px 22px; }
+  .note { background: #e6edf4; border-left: 6px solid var(--navy2); border-radius: 0 8px 8px 0; padding: 10px 16px; margin: 14px 0; } .note.nextup { background: #f7ecd2; border-color: var(--brass); }
+  .row { display: flex; gap: 10px; align-items: center; } .row.wrap { flex-wrap: wrap; margin: 8px 0; }
+  .btn { font: inherit; font-weight: bold; min-height: 46px; padding: 8px 18px; border-radius: 10px; border: 2px solid var(--navy); background: #fff; color: var(--navy); cursor: pointer; }
+  .btn.primary { background: var(--navy); color: #fff; } .btn.ghost { border-color: var(--line); color: var(--ink); background: transparent; } .btn.small { min-height: 38px; padding: 4px 12px; font-size: .9rem; }
+  .btn:hover:not(:disabled) { background: var(--navy2); color: #fff; border-color: var(--navy2); } .btn:disabled { opacity: .45; cursor: not-allowed; }
+  :focus-visible { outline: 4px solid #e0a100; outline-offset: 2px; }
+  .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 10px 0; }
+  .modecard { font: inherit; text-align: left; padding: 16px 18px; border-radius: 12px; border: 2px solid var(--navy2); background: #fff; color: var(--ink); cursor: pointer; display: flex; flex-direction: column; gap: 6px; }
+  .modecard strong { font-family: var(--head); font-size: 1.4rem; color: var(--navy); } .modecard:hover { background: #eaf1f7; }
+  .status { display: flex; gap: 8px 28px; align-items: center; flex-wrap: wrap; background: var(--navy); color: #fff; border-radius: 12px; padding: 8px 18px; margin-bottom: 10px; }
+  .status .k { display: block; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: #b9c8d8; } .status strong { font-size: 1.1rem; } .status .here strong { font-family: var(--head); font-size: 1.3rem; color: #f0c56a; }
+  .status .low { color: #ff9b7a; } .status .btns { margin-left: auto; display: flex; gap: 8px; } .status .btn { background: transparent; color: #fff; border-color: #6d88a5; } .status .btn:hover:not(:disabled) { background: #6d88a5; }
+  .game { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 12px; align-items: start; }
+  @media (max-width: 1000px) { .game { grid-template-columns: 1fr; } }
+  .mapwrap { background: #cfe3ee; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; } .map { width: 100%; height: auto; display: block; }
+  .map .ocean { fill: #cfe5f0; } .map .gl { stroke: #ffffff; stroke-opacity: .55; stroke-width: 1; } .map .land { fill: #ead9a8; stroke: #b79d5c; stroke-width: 1.5; }
+  .map .fog { fill: #fff; fill-opacity: .72; } .map .lbl { font: 14px var(--body); fill: #44607a; } .map .lbl.big { font: italic 22px var(--head); fill: #7aa0ba; letter-spacing: 4px; } .map .lbl.land-l { font: 12px var(--body); fill: #9d874a; letter-spacing: 2px; }
+  .map .lbl.nat { font: italic bold 13px var(--head); fill: #5d4a1c; } .map .fogt { font: italic 12px var(--body); fill: #6b7c8a; }
+  .map .wind { stroke: #ffffff; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-opacity: .95; } .map .cur { stroke: #3f86b6; stroke-width: 3; fill: none; stroke-linecap: round; stroke-opacity: .65; }
+  .map .harbor circle { fill: #fff6d8; stroke: var(--brass); stroke-width: 3; } .map .harbor.seen circle { fill: #d8efdc; stroke: var(--good); } .map .anchor { font-size: 20px; text-anchor: middle; }
+  .map .hname { font: bold 15px var(--head); fill: var(--navy); paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+  .map .rock { fill: #4a4a4a; stroke: #fff; stroke-width: 2; } .map .ship circle { fill: #fff; stroke: var(--navy); stroke-width: 3; } .map .ship text { font-size: 24px; text-anchor: middle; }
+  .map .pvline { stroke: var(--navy); stroke-width: 4; stroke-dasharray: 8 6; fill: none; opacity: .8; } .map .pvend { fill: #ffd98a; stroke: var(--navy); stroke-width: 3; } .map .pvline.bad, .map .pvend.bad { stroke: var(--bad); }
+  .panel { min-width: 0; }
+  .wc { display: grid; gap: 6px; } .ico { display: inline-block; width: 30px; height: 30px; line-height: 28px; text-align: center; border-radius: 50%; font-weight: bold; font-size: 1.1rem; }
+  .ico.wi { background: #fff; border: 2px solid #8aa3b8; color: var(--navy); } .ico.ci { background: #d5e8f4; border: 2px solid #3f86b6; color: #1d5b86; }
+  .padgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0; }
+  .pad { font: inherit; border-radius: 12px; min-height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 3px solid; background: #fff; }
+  .pad .ar { font-size: 1.7rem; line-height: 1; } .pad .sp { font-size: 1.15rem; font-weight: bold; } .pad .sp2 { font-size: .78rem; font-weight: bold; }
+  .pad.s3 { border-color: #2f7d4a; background: #e3f3e8; } .pad.s2 { border-color: #c4902a; background: #fbf0d4; } .pad.s0 { border-color: #c9c9c9; background: #eee; color: #888; cursor: not-allowed; }
+  .pad.center { border-color: var(--navy2); background: #e6edf4; color: var(--navy); } .pad:hover:not(:disabled) { filter: brightness(.95); transform: translateY(-1px); }
+  .pad.hint { box-shadow: 0 0 0 5px #f0c56a; }
+  .tip { background: #fbf4dc; border-radius: 8px; padding: 6px 10px; font-size: .9rem; } .keys { margin: 6px 0 0; }
+  .log { list-style: none; margin: 0; padding: 0; font-size: .88rem; } .log li { padding: 5px 0; border-bottom: 1px solid #ece4cd; color: var(--muted); } .log li.new { color: var(--ink); font-weight: bold; }
+  .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; } .results > div { background: #f6f1e0; border-radius: 10px; padding: 12px 16px; }
+  .big { font-size: 1.7rem; letter-spacing: 3px; color: var(--brass-dk); margin: 0 0 4px; } .think li { margin-bottom: .5em; }
+  .overlay { position: fixed; inset: 0; background: rgba(15, 30, 50, .62); display: flex; align-items: flex-start; justify-content: center; padding: 4vh 14px; overflow: auto; z-index: 20; }
+  .sheet { background: var(--card); border-radius: 14px; max-width: 720px; width: 100%; padding: 22px 26px 26px; box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+  .closebtn { float: right; margin-left: 10px; } .era { font-size: .85rem; letter-spacing: .04em; text-transform: uppercase; color: var(--brass-dk); margin-bottom: .3em; }
+  .gain { background: #e4efe6; padding: 8px 12px; border-radius: 8px; font-weight: bold; } .entry { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+  dt { font-weight: bold; margin-top: .6em; } dd { margin: 0 0 0 1em; }
+  @media (min-width: 1001px) and (min-height: 560px) {
+    #app.fixed { height: 100vh; display: flex; flex-direction: column; overflow: hidden; } #app.fixed .status { flex: none; }
+    #app.fixed .game { flex: 1 1 auto; min-height: 0; grid-template-rows: minmax(0, 1fr); align-items: stretch; }
+    #app.fixed .mapwrap { display: flex; align-items: center; justify-content: center; min-height: 0; } #app.fixed .map { max-height: 100%; width: auto; max-width: 100%; }
+    #app.fixed .panel { overflow-y: auto; padding-right: 4px; min-height: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main id="app"></main>
+<noscript>This game needs JavaScript turned on.</noscript>
+<script src="mapdata.js"></script>
+<script src="data.js"></script>
+<script src="core.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
